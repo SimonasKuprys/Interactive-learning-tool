@@ -372,3 +372,6 @@ def quiz_id():
 
 if __name__ == "__main__":
     main()
+    
+# https://github.com/SimonasKuprys/Interactive-learning-tool.git
+# https://github.com/SimonasKuprys/Card-War-Game.git
