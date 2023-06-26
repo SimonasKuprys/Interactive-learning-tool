@@ -36,14 +36,13 @@ class Button:
 #Reads all rows in file
 class Reader:
     @classmethod
-    def read_file(self):
+    def read_file(cls):
         try:
             all_info = []
             with open("quiz.csv") as csvfile:
                 reader = csv.DictReader(csvfile)
                 for row in reader:
                     all_info.append(row)
-            self.info = all_info
             return all_info
         except:
             print("File does not exist.")
@@ -150,11 +149,17 @@ def add_quiz_question():
     question, a, b, c, correct_answer = get_quiz_QA()
     id = quiz_id()
     active = True
-    default_values = {"n_shown_practice": 0,"n_shown_tests": 0,"correct": 0,"incorrect": 0,"percentage_correct": 0}
-    question_data = {"id": id,"active": active,"question": question,"a": a,"b": b,"c": c,"correct_answer": correct_answer}
+    default_values = {"n_shown_practice": 0, "n_shown_tests": 0, "correct": 0, "incorrect": 0, "percentage_correct": 0}
+    question_data = {"id": id, "active": active, "question": question, "a": a, "b": b, "c": c, "correct_answer": correct_answer}
     question_data.update(default_values)
-    writer = Writer(question_data)
-    writer.append_to_file()
+
+    # Check if any of the answers matches the correct answer
+    if correct_answer.lower() == a.lower() or correct_answer.lower() == b.lower() or correct_answer.lower() == c.lower():
+        print("At least one answer matches the correct answer.")
+        writer = Writer(question_data)
+        writer.append_to_file()
+    else:
+        print("None of the answers match the correct answer. Question not added.")
     
 #gets question and answer for free form
 def get_free_form_Q():
@@ -167,7 +172,6 @@ def add_free_form_question():
     question,correct_answer = get_free_form_Q()
     id = quiz_id()
     active = True
-    
     default_values = {"n_shown_practice": 0,"n_shown_tests": 0,"correct": 0,"incorrect": 0,"percentage_correct": 0}
     question_data = {"id": id,"active": active,"question": question,"correct_answer": correct_answer}
     question_data.update(default_values)
@@ -236,41 +240,44 @@ def practice():
     print("Practice finished.")
 
 def test():
-    #gets all needed info for test mode
-    #test only on question with state True
+    # gets all needed info for test mode
+    # test only on questions with state True
     reader = Reader()
     date = datetime.datetime.today()
     now = date.strftime("%Y-%m-%d %H:%M:%S")
     score = 0
     all_info = reader.read_file()
-    
-    #collects questions with active status
+
+    # collects questions with active status
     active_questions = get_active_questions(all_info)
     random.shuffle(active_questions)
     len_of_number = check_active_questions(active_questions)
-    
-    #prints active questions
+
+    # prints active questions
     for i in active_questions[:len_of_number]:
         for row in all_info:
             if i == row["question"]:
                 print(row["question"])
-                n_shown = int(row["n_shown_tests"]) 
+                n_shown = int(row["n_shown_tests"])
                 row["n_shown_tests"] = n_shown + 1
                 if row["b"] == "" and row["c"] == "":
                     score += if_free_form_q(row)
                 else:
                     score += if_quiz_q(row)
-            #calculates percentage and ads to to row
-            percent = percentage_counter(int(row["correct"]),int(row["incorrect"]))
-            row["percentage_correct"] = percent  
-    print(f"You answered correctly {score} questions out of {len_of_number}.")  
+            # calculates percentage and adds it to the row
+            percent = percentage_counter(int(row["correct"]), int(row["incorrect"]))
+            row["percentage_correct"] = percent
+    print(f"You answered correctly {score} questions out of {len_of_number}.")
     score_str = f"Out of {len_of_number} questions, {score} was answered correctly."
     print("Test finished.")
-    score_and_time =[now,score_str]
-    #writes test result to txt file
-    with open("results.txt","a",newline='') as txtfile:
+    score_and_time = [now, score_str]
+    # writes test result to txt file
+    with open("results.txt", "a", newline='') as txtfile:
         writer = csv.writer(txtfile)
         writer.writerow(score_and_time)
+
+    writer = Writer(all_info)
+    writer.write_to_file()
         
     writer = Writer(all_info)   
     writer.write_to_file()  
@@ -289,7 +296,9 @@ def check_active_questions(active):
         print(f"{len(active)} active questions.")
         try:
             n_of_questions = int(input("Number of questions to test: "))
-            if n_of_questions > len(active):
+            if n_of_questions < 1:
+                print("Invalid number of questions. Please enter a number greater than 0.")
+            elif n_of_questions > len(active):
                 print(f"Entered number is greater than the number of questions. {len(active)} questions are active.")
             else:
                 print(f"{n_of_questions} questions selected.")
@@ -372,6 +381,8 @@ def quiz_id():
 
 if __name__ == "__main__":
     main()
+    
+    
     
 # https://github.com/SimonasKuprys/Interactive-learning-tool.git
 # https://github.com/SimonasKuprys/Card-War-Game.git
