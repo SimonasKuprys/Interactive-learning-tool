@@ -1,6 +1,7 @@
 id,active,question,a,b,c,correct_answer,n_shown_practice,n_shown_tests,correct,incorrect,percentage_correct
-1,True,What is the capital of France?,paris,london,berlin,paris,8,10,5,13,28
-2,True,Who painted the Mona Lisa?,leonardo da vinci,vincent van gogh,pablo picasso,leonardo da vinci,10,4,1,13,7
+1,True,What is the capital of France?,paris,london,berlin,paris,8,13,7,14,33
+2,True,Who painted the Mona Lisa?,leonardo da vinci,vincent van gogh,pablo picasso,leonardo da vinci,10,6,2,14,12
 4,False,What is the largest planet in our solar system?,jupiter,mars,earth,jupiter,3,3,3,3,50
 5,False,What is the chemical symbol for gold?,au,hg,ag,au,6,2,3,5,38
-10,True,what is What is the capital of Germany?,,,,berlin,0,1,1,0,100
+10,False,what is What is the capital of Germany?,,,,berlin,0,1,1,0,100
+87,True,"asd ""sad"" , sd",,,,"sd , ""sd"" , sd",0,0,0,0,0
